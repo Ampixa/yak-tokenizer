@@ -1,0 +1,13 @@
+# per-tokenizer results and downloads are rebuilt by scripts/eval_panel.py
+artifacts/
+# FLORES+ is gated, so its text is fetched locally and never committed (data/eval/flores_plus/.gitignore)
+# the languages-of-Nepal held-out sets are not redistributable
+data/eval/nepal_langs/
+# code and math are optional sets, fetched with `scripts/eval_panel.py fetch --code-math`
+data/eval/code/
+data/eval/math/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/

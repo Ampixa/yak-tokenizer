@@ -1,0 +1,102 @@
+# Baseline panel for the Yak harness: uv run python scripts/eval_panel.py run
+#
+# kind:
+#   tiktoken       OpenAI encodings (encoding: gpt2 | cl100k_base | o200k_base | o200k_harmony)
+#   hf_json        a repo's tokenizer.json loaded with the Rust `tokenizers` library
+#   transformers   transformers AutoTokenizer (repos without a tokenizer.json)
+#   sentencepiece  a raw SentencePiece .model file (file: picks one)
+#   auto           tokenizer.json if present, else transformers, else a .model
+# Only tokenizer files are downloaded (never weights); the resolved commit is recorded in each
+# artifacts/eval/<name>.json. mirror_of names the gated upstream an ungated mirror copies.
+# Add your own tokenizer on the command line:  --add mine=path/to/tokenizer.json (or a folder, sp:x.model, hf:org/repo)
+
+tokenizers:
+  # OpenAI
+  - {name: gpt2, kind: tiktoken, encoding: gpt2, group: english-centric}
+  - {name: cl100k, kind: tiktoken, encoding: cl100k_base, group: english-centric}
+  - {name: o200k, kind: tiktoken, encoding: o200k_base, group: frontier}
+  - {name: gpt-oss, kind: hf_json, repo: openai/gpt-oss-20b, group: frontier}
+
+  # Frontier and open LLMs
+  - {name: llama3, kind: hf_json, repo: NousResearch/Meta-Llama-3-8B,
+     mirror_of: meta-llama/Meta-Llama-3-8B, group: english-centric}
+  - {name: gemma2, kind: hf_json, repo: unsloth/gemma-2-9b, mirror_of: google/gemma-2-9b,
+     group: frontier}
+  - {name: gemma3, kind: hf_json, repo: unsloth/gemma-3-1b-it, mirror_of: google/gemma-3-1b-it,
+     group: frontier}
+  - {name: qwen2.5, kind: hf_json, repo: Qwen/Qwen2.5-7B, group: english-centric}
+  - {name: qwen3, kind: hf_json, repo: Qwen/Qwen3-8B, group: english-centric}
+  - {name: deepseek-v3, kind: hf_json, repo: deepseek-ai/DeepSeek-V3, group: english-centric}
+  - {name: mistral-nemo, kind: hf_json, repo: mistralai/Mistral-Nemo-Base-2407, group: frontier}
+
+  # Indic LLMs
+  - {name: sarvam-1, kind: hf_json, repo: sarvamai/sarvam-1, group: indic}
+  - {name: sarvam-m, kind: hf_json, repo: sarvamai/sarvam-m, group: indic}
+  - {name: sarvam-30b, kind: hf_json, repo: sarvamai/sarvam-30b, group: indic}
+  - {name: krutrim-1, kind: hf_json, repo: krutrim-ai-labs/Krutrim-1-instruct, group: indic}
+  - {name: krutrim-2, kind: hf_json, repo: krutrim-ai-labs/Krutrim-2-instruct, group: indic}
+  - {name: param-1, kind: hf_json, repo: bharatgenai/Param-1-2.9B-Instruct, group: indic}
+  - {name: param-2, kind: hf_json, repo: bharatgenai/Param2-17B-A2.4B-Thinking, group: indic}
+  - {name: brahmic-131k, kind: hf_json, repo: theschoolofai/BrahmicTokenizer-131K, group: indic}
+  - {name: airavata, kind: hf_json, repo: ai4bharat/Airavata, group: indic}
+
+  # Massively multilingual encoders and MT
+  - {name: bloom, kind: hf_json, repo: bigscience/bloom-560m, group: multilingual}
+  - {name: indicbert-v2, kind: hf_json, repo: ai4bharat/IndicBERTv2-MLM-only, group: multilingual}
+  - {name: muril, kind: transformers, repo: google/muril-base-cased, group: multilingual}
+  - {name: xlm-r, kind: hf_json, repo: FacebookAI/xlm-roberta-base, group: multilingual}
+  - {name: mt5, kind: transformers, repo: google/mt5-base, group: multilingual}
+  - {name: nllb-200, kind: hf_json, repo: facebook/nllb-200-distilled-600M, group: multilingual}
+
+  # Nepali
+  - {name: arkios, kind: hf_json, repo: sajalregmi4/arkios-tokenizer, group: nepali}
+  # NepBERTa ships only vocab.txt, so AutoTokenizer falls back to BERT defaults that lowercase AND
+  # strip accents, deleting Devanagari vowel signs and the virama (नेपालमा -> नपालमा). 19,270 of its
+  # 30,523 vocab entries contain those marks, so it was trained without stripping: keep them.
+  - {name: nepberta, kind: transformers, repo: NepBERTa/NepBERTa, group: nepali,
+     kwargs: {do_lower_case: true, strip_accents: false}}
+  - {name: nepali-bpe, kind: hf_json, repo: Aananda-giri/NepaliBPE, group: nepali}
+  - {name: nyayalm-64k, kind: hf_json, repo: chhatramani/nyayalm-tokenizer-64k_v2, group: nepali}
+  - {name: himalaya-64k, kind: sentencepiece, repo: himalaya-ai/nepali-tokenizer-bpe-64k-5b,
+     file: himalaya-ai_nepali-tokenizer-corpus-64000.model, group: nepali}
+  - {name: himalaya-100k, kind: sentencepiece, repo: himalaya-ai/nepali-tokenizer-bpe-100k-5b,
+     file: himalaya-ai_nepali-tokenizer-corpus-100000.model, group: nepali}
+  - {name: himalaya-128k, kind: sentencepiece, repo: himalaya-ai/nepali-tokenizer-bpe-128k-5b,
+     file: himalaya-ai_nepali-tokenizer-corpus-128000.model, group: nepali}
+  - {name: sidskarki-64k, kind: sentencepiece, repo: sidskarki/nepali-bpe-tokenizer,
+     file: nepali_bpe_64k.model, group: nepali}
+  - {name: sai-nep-128k, kind: sentencepiece, repo: Sai5480/monolingual-tokenizer-native-nep-vocab-128000,
+     file: nep.model, group: nepali}
+
+  # Yak itself, from https://huggingface.co/ampixa/yak-tokenizer (one folder per version and size)
+  - {name: yak-128k-v2.0, kind: hf_json, repo: ampixa/yak-tokenizer, file: v2.0/128k/tokenizer.json, group: yak}
+  - {name: yak-64k-v2.0, kind: hf_json, repo: ampixa/yak-tokenizer, file: v2.0/64k/tokenizer.json, group: yak}
+  - {name: yak-128k-v1, kind: hf_json, repo: ampixa/yak-tokenizer, file: v1.0/128k/tokenizer.json, group: yak}
+  - {name: yak-64k-v1, kind: hf_json, repo: ampixa/yak-tokenizer, file: v1.0/64k/tokenizer.json, group: yak}
+  - {name: yak-32k-v1, kind: hf_json, repo: ampixa/yak-tokenizer, file: v1.0/32k/tokenizer.json, group: yak}
+  - {name: yak-128k-v1-phrase, kind: hf_json, repo: ampixa/yak-tokenizer, file: v1.0/128k-phrase/tokenizer.json, group: yak}
+  - {name: yak-64k-v1-phrase, kind: hf_json, repo: ampixa/yak-tokenizer, file: v1.0/64k-phrase/tokenizer.json, group: yak}
+
+# Validity gate: our harness must reproduce these published numbers within the tolerance before
+# any claim is made. Measured on FLORES devtest npi_Deva, tokens per whitespace word, no specials.
+validity_gate:
+  text: flores_devtest/npi_Deva
+  tolerance: 0.03
+  source: Arkios paper (arXiv 2608.26449), main table; FLORES-200 devtest
+  published:
+    gpt2: 10.97
+    cl100k: 6.98
+    o200k: 2.32
+    llama3: 3.76
+    arkios: 1.69
+  # The same table also reports these. They are cross-checks, not part of the gate.
+  secondary:
+    qwen2.5: 6.57
+    deepseek-v3: 4.29
+    gemma2: 3.13
+    mistral-nemo: 3.17
+    sarvam-1: 2.66
+    mt5: 2.64
+    nllb-200: 1.92
+    indicbert-v2: 1.58
+    bloom: 1.72

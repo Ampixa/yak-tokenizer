@@ -1,0 +1,41 @@
+[project]
+name = "yak-tokenizer"
+version = "2.0.0"
+description = "Yak: open, lossless, Nepali-first tokenizers for the languages of Nepal, and the benchmark that measures them."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Ampixa Labs" }]
+keywords = ["nepali", "tokenizer", "bpe", "devanagari", "nepal", "llm", "benchmark"]
+dependencies = [
+  "tokenizers>=0.21",
+  "huggingface_hub>=0.30",
+]
+
+[project.optional-dependencies]
+eval = [
+  "pyyaml>=6.0",
+  "regex>=2024.9",
+  "transformers>=4.46",
+  "tiktoken>=0.8",
+  "sentencepiece>=0.2",
+  "protobuf>=5",
+  "jinja2>=3.1",
+  "pyarrow>=17",  # eval_panel.py fetch reads HumanEval, MBPP, GSM8K, MATH parquet
+]
+dev = ["pytest>=8"]
+
+[project.urls]
+"Hugging Face" = "https://huggingface.co/ampixa/yak-tokenizer"
+Homepage = "https://ampixa.com"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yak_tokenizer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

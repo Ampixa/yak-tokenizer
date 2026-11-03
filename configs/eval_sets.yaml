@@ -1,0 +1,120 @@
+# Evaluation sets for the Yak harness (src/yak_tokenizer/eval/evalsets.py).
+# Paths are relative to the repo root. Build or refresh the files with:
+#   uv run python scripts/eval_panel.py fetch
+#
+# kind of file: .txt = one segment per line; .jsonl = {"text", "id"} per line.
+# count: how the headline token count T is taken (see src/yak_tokenizer/eval/metrics.py)
+#   joined   = encode the "\n"-joined file in one call (FLORES; matches published numbers)
+#   segments = encode each segment separately and sum (word lists, documents)
+# aligned/reference: line-parallel sets get parity against the reference language.
+# nfc: NFC-normalise the text in memory before tokenizing (files stay as published).
+# panel: include in the default panel run. Code and math are optional: fetch and run them with
+#   --code-math (their files are not committed).
+
+sets:
+  flores_devtest:
+    path: data/eval/flores_plus/devtest/{lang}.txt
+    langs: [npi_Deva, eng_Latn, hin_Deva, mai_Deva, bho_Deva, san_Deva, awa_Deva, mag_Deva,
+            bod_Tibt, sat_Olck]
+    count: joined
+    aligned: true
+    reference: eng_Latn
+    nfc: true
+    domain: flores
+    license: CC-BY-SA-4.0
+    source: openlanguagedata/flores_plus (devtest)
+    panel: true
+
+  flores_dev:
+    path: data/eval/flores_plus/dev/{lang}.txt
+    langs: [npi_Deva, eng_Latn, hin_Deva, mai_Deva, bho_Deva, san_Deva, awa_Deva, mag_Deva,
+            bod_Tibt, sat_Olck]
+    count: joined
+    aligned: true
+    reference: eng_Latn
+    nfc: true
+    domain: flores
+    license: CC-BY-SA-4.0
+    source: openlanguagedata/flores_plus (dev)
+    panel: false
+
+  code_humaneval:
+    path: data/eval/code/humaneval.jsonl
+    count: segments
+    domain: code
+    license: MIT
+    source: openai/openai_humaneval (test; prompt + canonical solution)
+    panel: false
+
+  code_mbpp:
+    path: data/eval/code/mbpp.jsonl
+    count: segments
+    domain: code
+    license: CC-BY-4.0
+    source: google-research-datasets/mbpp (full/test; task text + code)
+    panel: false
+
+  math_gsm8k:
+    path: data/eval/math/gsm8k.jsonl
+    count: segments
+    domain: math
+    license: MIT
+    source: openai/gsm8k (main/test; question + answer)
+    panel: false
+
+  math_latex:
+    path: data/eval/math/math_latex.jsonl
+    count: segments
+    domain: math
+    license: MIT
+    source: EleutherAI/hendrycks_math (test; 100 seeded problems per subject, with LaTeX)
+    panel: false
+
+  npi_latn_words:
+    path: data/eval/npi_latn/roman_words.txt
+    count: segments
+    domain: npi_latn
+    license: MIT
+    source: Saugatkafley/Nepali-Roman-Transliteration (validation; Romanized side, one word per line)
+    panel: true
+
+  npi_latn_words_deva:
+    path: data/eval/npi_latn/roman_words_deva.txt
+    count: segments
+    domain: npi_formal
+    license: MIT
+    source: Saugatkafley/Nepali-Roman-Transliteration (validation; Devanagari side of the same words)
+    panel: true
+
+  npi_everyday_aya:
+    path: data/eval/npi_everyday/aya_npi.jsonl
+    count: segments
+    domain: npi_everyday
+    license: Apache-2.0
+    source: CohereLabs/aya_dataset (train, language=Nepali; human-written prompt + answer, seeded sample)
+    panel: true
+
+  # Languages of Nepal without FLORES coverage: 500 held-out segments per language. The text
+  # cannot be redistributed, so these files are not in this repository and a public run skips
+  # them; docs/RESULTS.md reports the numbers we measured on them.
+  nepal_langs:
+    path: data/eval/nepal_langs/{lang}.txt
+    langs: [aph, dhi, gvr, kle, kyv, lbr, lif, mgp, new, rav, suz, taj, thl, thr]
+    count: segments
+    domain: nepal_langs
+    license: not redistributable
+    source: held-out segments, 500 per language (not public)
+    panel: true
+
+  nepal_langs_aligned:
+    path: data/eval/nepal_langs/aligned/{lang}.txt
+    langs: [npi, aph, dhi, gvr, kle, kyv, lbr, lif, mgp, new, rav, suz, taj, thl, thr]
+    count: segments
+    aligned: true
+    reference: npi
+    domain: nepal_langs
+    license: not redistributable
+    source: the same 300 held-out segments in every language, line-aligned with Nepali (not public)
+    panel: true
+
+

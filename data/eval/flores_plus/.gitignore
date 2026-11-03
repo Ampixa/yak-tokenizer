@@ -1,0 +1,5 @@
+# FLORES+ gating terms: "I agree not to re-host FLORES+ in places where it could be picked up
+# by web crawlers". The text stays local; rebuild it with `uv run python scripts/eval_panel.py fetch`.
+# MANIFEST.tsv one level up records the sha256 of every file for reproducibility.
+dev/
+devtest/
