@@ -6,6 +6,8 @@ The tokenizers are on Hugging Face: **[ampixa/yak-tokenizer](https://huggingface
 This repository holds the guide, the full results and the benchmark harness, so you can check every
 number below and measure your own tokenizer the same way.
 
+Read the write-up: **[Yak: an open, lossless, Nepali-first tokenizer](https://ampixa.com/blog/yak-an-open-lossless-nepali-first-tokenizer/)**.
+
 > **Coming soon:** Ampixa Labs is developing a new large language model. Release details will be shared on [ampixa.com](https://ampixa.com) and [Hugging Face](https://huggingface.co/ampixa).
 
 **We measured 19 languages of Nepal:** 14 from held-out translation data (Athpariya, Dhimal, Gurung, Kulung,
